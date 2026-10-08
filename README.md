@@ -1,5 +1,60 @@
 # Frontify Frontend Live Coding Task
 
+## Solution
+
+The upload is split in two, so each half can be replaced without touching the other:
+
+- **Logic: the [`useFileUploader`](src/client/components/FileUpload/useFileUploader/useFileUploader.ts) hook.** It owns
+  the queue, chunking, progress, cancel and retry. It renders nothing and does not know the server: the two functions
+  that send data ([filesApi.ts](src/client/api/filesApi.ts)) are passed in.
+- **UI: the [`FileUpload.*`](src/client/components/FileUpload/FileUpload.tsx) components.** They only render what they
+  are given and report user actions. They hold no upload state.
+
+Both are exported from [src/client/components/FileUpload](src/client/components/FileUpload/index.ts).
+
+A complete uploader is the hook wired to the parts:
+
+```tsx
+import { uploadChunk, uploadSingle } from './api/filesApi';
+import { FileUpload, useFileUploader } from './components/FileUpload';
+
+export const Uploader = () => {
+    const { files, upload, retry, remove } = useFileUploader({
+        uploadFn: uploadSingle,
+        uploadChunkFn: uploadChunk,
+    });
+
+    return (
+        <FileUpload.Root>
+            <FileUpload.Dropzone onFiles={upload} />
+            <FileUpload.List title="Uploads">
+                {files.map((file) => (
+                    <FileUpload.Item key={file.id} file={file} onRetry={retry} onRemove={remove} />
+                ))}
+            </FileUpload.List>
+        </FileUpload.Root>
+    );
+};
+```
+
+The app shows three ways to combine them, one per tab, in [src/client/examples](src/client/examples/):
+[DropzoneExample](src/client/examples/DropzoneExample.tsx), [ButtonExample](src/client/examples/ButtonExample.tsx) and
+[CustomUploads](src/client/examples/CustomUploads.tsx).
+
+### To improve
+
+**Handle duplicates.** Nothing checks whether a file with the same name is already in the queue or on the server.
+
+**Optimize the file storage.** The files are an array, so every progress update runs `map` over the whole list to
+change one item ([useFileUploader.ts:49-51](src/client/components/FileUpload/useFileUploader/useFileUploader.ts#L49-L51)).
+
+**Resume from the last uploaded chunk.** Retry sends a chunked file again from the first chunk.
+
+**Prevent silent cancel on leave or unmount.** Closing the page or unmounting the component aborts running uploads
+without a warning.
+
+**Validate size and extension.** Any file is accepted and sent, whatever its size or type.
+
 ## Task
 
 Uploading digital assets is one of the core parts of Frontify. The feature must work seamlessly and with a good user
