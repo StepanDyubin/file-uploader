@@ -1,5 +1,16 @@
 import { type ReactElement } from 'react';
 
+import { ButtonExample } from './examples/ButtonExample';
+import { CustomUploads } from './examples/CustomUploads';
+import { DropzoneExample } from './examples/DropzoneExample';
+import { type TabItem, Tabs } from './examples/Tabs';
+
+const examples: TabItem[] = [
+    { label: 'Dropzone', content: <DropzoneExample /> },
+    { label: 'Button', content: <ButtonExample /> },
+    { label: 'CustomUploads', content: <CustomUploads /> },
+];
+
 export const App = (): ReactElement => {
     return (
         <main className="relative isolate h-dvh">
@@ -10,11 +21,11 @@ export const App = (): ReactElement => {
                 className="absolute inset-0 -z-10 h-full w-full object-cover object-top"
             />
 
-            <div className="mx-auto max-w-7xl px-6 py-32 text-center sm:py-40 lg:px-8">
+            <div className="mx-auto flex h-full max-w-7xl flex-col px-6 pb-6 pt-32 text-center sm:pt-40 lg:px-8">
                 <h1 className="mt-4 text-3xl font-bold tracking-tight text-gray-800 sm:text-5xl">Hello there</h1>
-                <p className="mt-4 text-base text-gray-900 sm:mt-6">
-                    Everything brand starts small, let&apos;s build something great.
-                </p>
+                <div className="mt-8 flex min-h-0 flex-col">
+                    <Tabs label="Upload examples" tabs={examples} />
+                </div>
             </div>
         </main>
     );

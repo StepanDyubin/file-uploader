@@ -1,5 +1,7 @@
 # Frontify Frontend Live Coding Task
 
+## Task
+
 Uploading digital assets is one of the core parts of Frontify. The feature must work seamlessly and with a good user
 experience, as thousands of files in many sizes and formats are ingested daily through our web application.
 
@@ -125,7 +127,7 @@ Content-Type: `multipart/form-data`
 ### Upload a file in chunks
 
 ```http
-POST /api/upload-chunks
+POST /api/upload-chunk
 ```
 
 | Body parameter      | Type     | Description                                  |
